@@ -5,15 +5,17 @@ const sequelize = require("./models/index.js");
 
 const app = express();
 
-sequelize.sync();
+var corsOrigin = {
+  origin: "http://localhost:8081"
+};
 
-// parse requests of content-type - application/json
+
 app.use(bodyParser.json());
-
-// parse requests of content-type - application/x-www-form-urlencoded
+app.use(cors(corsOrigin));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// simple route
+sequelize.sync();
+
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to xpart server." });
 });
@@ -22,7 +24,6 @@ require("./routes/document.routes")(app);
 require("./routes/project.routes")(app);
 require("./routes/user.routes")(app);
 
-// set port, listen for requests
 const PORT = 8080;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on port ${PORT}.`);

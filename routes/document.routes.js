@@ -5,6 +5,8 @@ module.exports = app => {
 
   var router = require("express").Router();
 
+  router.get("/maxpartnum", asyncHandler(documents.getMaxPart));
+
   router.post("/", asyncHandler(documents.createDoc));
 
   router.get("/", asyncHandler(documents.findAllDocs));

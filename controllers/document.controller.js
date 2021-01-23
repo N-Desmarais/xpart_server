@@ -6,12 +6,18 @@ const Document = sequelize.models.Documents;
 const Models = sequelize.models;
 const Op = Sequelize.Op;
 
+exports.getMaxPart = () => Document.findAll({
+  attributes: [[sequelize.fn('max', sequelize.col('part_num')), 'maxPartNum']],
+  raw: true,
+});
+
 exports.createDoc = async (req, res) => {
   expected = {
     "project": 1,
     "class": 1,
     "description": "string",
     "requestor": 1,
+    "part_num": 1
   }
 
   input_check = await Input.complex_check(expected, req.body);
@@ -29,7 +35,7 @@ exports.createDoc = async (req, res) => {
   const doc = {
     "project": req.body.project,
     "class": req.body.class,
-    "part_num": 0,
+    "part_num": req.body.part_num,
     "description": req.body.description,
     "requestor": req.body.requestor,
     "creation_date": dateTime
