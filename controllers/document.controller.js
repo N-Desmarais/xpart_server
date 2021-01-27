@@ -1,23 +1,35 @@
 const sequelize = require("../models/index.js");
 const Sequelize = require("sequelize");
-const moment = require("moment");
+
 const Input = require("../utils/input-utils.js");
 const Document = sequelize.models.Documents;
+const Document_Classes = sequelize.models.Document_Classes;
 const Models = sequelize.models;
 const Op = Sequelize.Op;
 
-exports.getMaxPart = () => Document.findAll({
+exports.getMaxPart = async (req, res) => {
+  Document.findAll({
   attributes: [[sequelize.fn('max', sequelize.col('part_num')), 'maxPartNum']],
   raw: true,
-});
+  })
+  .then(response => {
+    res.send(response);
+  })
+  .catch(err => {
+    res.status(500).send({
+      message: err.message || "no error message"
+    });
+  });
+}
+
 
 exports.createDoc = async (req, res) => {
   expected = {
-    "project": 1,
-    "class": 1,
-    "description": "string",
-    "requestor": 1,
-    "part_num": 1
+    "Project": 1,
+    "Doc_Class": 1,
+    "Description": "string",
+    "Requestor": 1,
+    "Part_Num": 1
   }
 
   input_check = await Input.complex_check(expected, req.body);
@@ -29,16 +41,21 @@ exports.createDoc = async (req, res) => {
     return
   }
 
-  const format = "YYYY-MM-DD"
-  dateTime = moment().format(format);
-
   const doc = {
-    "project": req.body.project,
-    "class": req.body.class,
-    "part_num": req.body.part_num,
-    "description": req.body.description,
-    "requestor": req.body.requestor,
-    "creation_date": dateTime
+    "project": req.body.Project,
+    "class": req.body.Doc_Class,
+    "part_num": req.body.Part_Num,
+    "revision": req.body.Revision,
+    "description": req.body.Description,
+    "requestor": req.body.Requestor,
+    "checker": req.body.Checker,
+    "approver": req.body.Approver,
+    "creation_date": req.body.Creation_Date,
+    "ready_date": req.body.Ready_Date,
+    "checked_date": req.body.Checked_Date,
+    "approved_date": req.body.Approved_Date,
+    "released_date": req.body.Released_Date,
+    "revision_reason": req.body.Revision_Reason
   }
 
   Document.create(doc)
@@ -116,6 +133,18 @@ exports.findAllDocs = async (req, res) => {
     });
 };
 
+exports.findDocClasses = async (req, res) => {
+  Document_Classes.findAll()
+    .then(response => {
+      res.send(response);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: err.message || "no error message"
+      });
+    });
+};
+
 exports.findAllDocsByProject = async (req, res) => {
   req.query['strict'] = true;
   req.query['project'] = req.params['project'];
@@ -159,12 +188,32 @@ exports.updateDoc = async (req, res) => {
     return
   }
 
+  const doc = {
+    "project": req.body.Project,
+    "class": req.body.Doc_Class,
+    "part_num": req.body.Part_Num,
+    "revision": req.body.Revision,
+    "description": req.body.Description,
+    "requestor": req.body.Requestor,
+    "checker": req.body.Checker,
+    "approver": req.body.Approver,
+    "creation_date": req.body.Creation_Date,
+    "ready_date": req.body.Ready_Date,
+    "checked_date": req.body.Checked_Date,
+    "approved_date": req.body.Approved_Date,
+    "released_date": req.body.Released_Date,
+    "revision_reason": req.body.Revision_Reason
+  }
+
+  console.log(req.params)
+  console.log(req.body)
   const id = req.params.id;
 
-  Document.update(req.body, {
+  Document.update(doc, {
     where: { doc_id: id }
   })
     .then(num => {
+      console.log(num);
       if (num == 1) {
         res.send({
           message: "Document updated."

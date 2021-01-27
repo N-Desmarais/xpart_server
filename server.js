@@ -6,7 +6,7 @@ const sequelize = require("./models/index.js");
 const app = express();
 
 var corsOrigin = {
-  origin: "http://localhost:8081"
+  origin: "*"
 };
 
 

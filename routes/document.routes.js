@@ -11,6 +11,8 @@ module.exports = app => {
 
   router.get("/", asyncHandler(documents.findAllDocs));
 
+  router.get("/classes", asyncHandler(documents.findDocClasses));
+
   router.get("/:id", asyncHandler(documents.findOneDoc));
 
   router.get("/project/:project", asyncHandler(documents.findAllDocsByProject));
