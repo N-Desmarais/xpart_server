@@ -9,7 +9,7 @@ module.exports = app => {
 
   router.get("/", asyncHandler(users.findAllUsers));
 
-  router.get("/:id", asyncHandler(users.findOneUser));
+  router.get("/:email", asyncHandler(users.findOneUser));
 
   router.put("/:id", asyncHandler(users.updateUser));
 

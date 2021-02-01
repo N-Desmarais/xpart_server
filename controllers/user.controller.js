@@ -3,13 +3,12 @@ const Sequelize = require("sequelize");
 const Input = require("../utils/input-utils.js");
 const User = sequelize.models.Users;
 const Models = sequelize.models;
+const Op = Sequelize.Op;
 
 exports.createUser = async (req, res) => {
   expected = {
     "name": "string",
     "email": "string",
-    "pwd_hash": "string",
-    "role": 1
   }
 
   input_check = await Input.complex_check(expected, req.body);
@@ -22,10 +21,8 @@ exports.createUser = async (req, res) => {
   }
 
   const use = {
-    "name": "string",
-    "email": "string",
-    "pwd_hash": "string",
-    "role": 1
+    "name": req.body.name,
+    "email": req.body.email
   }
 
   User.create(use)
@@ -55,7 +52,7 @@ exports.findAllUsers = async (req, res) => {
 };
 
 exports.findOneUser = async (req, res) => {
-  expected = { id: 1 }
+  expected = { email: "string" }
 
   input_check = await Input.simple_check(expected, req.params);
   if(Object.keys(input_check).length != 0) {
@@ -66,9 +63,12 @@ exports.findOneUser = async (req, res) => {
     return
   }
 
-  const id = req.params.id;
+  var whereStatement = {email: {[Op.eq]: req.params.email}};
 
-  User.findByPk(id)
+  User.findAll({
+    where: { whereStatement },
+    include: Models.User_Roles
+  })
     .then(response => {
       res.send(response);
     })
