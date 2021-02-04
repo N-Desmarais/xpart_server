@@ -53,7 +53,6 @@ exports.findAllUsers = async (req, res) => {
 
 exports.findOneUser = async (req, res) => {
   expected = { email: "string" }
-
   input_check = await Input.simple_check(expected, req.params);
   if(Object.keys(input_check).length != 0) {
     res.status(400).send({
@@ -63,10 +62,11 @@ exports.findOneUser = async (req, res) => {
     return
   }
 
-  var whereStatement = {email: {[Op.eq]: req.params.email}};
+  var whereStatement = {};
+  whereStatement['email'] = {[Op.eq]: req.params.email};
 
   User.findAll({
-    where: { whereStatement },
+    where: whereStatement,
     include: Models.User_Roles
   })
     .then(response => {
@@ -93,7 +93,12 @@ exports.updateUser = async (req, res) => {
 
   const id = req.params.id;
 
-  User.update(req.body, {
+  const user = {
+    email: req.body.email,
+    name: req.body.initials
+  }
+
+  User.update(user, {
     where: { user_id: id }
   })
     .then(num => {

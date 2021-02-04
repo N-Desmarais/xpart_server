@@ -2,7 +2,7 @@
 
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('User_roles', {
+  return sequelize.define('User_Roles', {
     role_id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -15,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     sequelize,
-    tableName: 'User_roles',
+    tableName: 'User_Roles',
     timestamps: false,
     indexes: [
       {

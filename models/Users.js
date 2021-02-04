@@ -26,7 +26,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: 'User_roles',
+        model: 'User_Roles',
         key: 'role_id'
       }
     }

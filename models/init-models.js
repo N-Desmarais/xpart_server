@@ -2,14 +2,16 @@ var DataTypes = require("sequelize").DataTypes;
 var _Document_Classes = require("./Document_Classes");
 var _Documents = require("./Documents");
 var _Projects = require("./Projects");
-var _User_roles = require("./User_roles");
+var _User_Projects = require("./User_Projects");
+var _User_Roles = require("./User_Roles");
 var _Users = require("./Users");
 
 function initModels(sequelize) {
   var Document_Classes = _Document_Classes(sequelize, DataTypes);
   var Documents = _Documents(sequelize, DataTypes);
   var Projects = _Projects(sequelize, DataTypes);
-  var User_roles = _User_roles(sequelize, DataTypes);
+  var User_Projects = _User_Projects(sequelize, DataTypes);
+  var User_Roles = _User_Roles(sequelize, DataTypes);
   var Users = _Users(sequelize, DataTypes);
 
   Documents.belongsTo(Projects, { foreignKey: "project"});
@@ -24,14 +26,20 @@ function initModels(sequelize) {
   Users.hasMany(Documents, { foreignKey: "approver"});
   Projects.belongsTo(Users, { foreignKey: "owner"});
   Users.hasMany(Projects, { foreignKey: "owner"});
-  Users.belongsTo(User_roles, { foreignKey: "role"});
-  User_roles.hasMany(Users, { foreignKey: "role"});
+  User_Projects.belongsTo(Users, { as: "Project", foreignKey: "user"});
+  Projects.belongsToMany(Users, { through: User_Projects, foreignKey: "project", otherKey: "user" });
+  Users.hasMany(User_Projects, { foreignKey: "user"});
+  User_Projects.belongsTo(Projects, { as: "User", foreignKey: "project"});
+  Projects.hasMany(User_Projects, { foreignKey: "project"});
+  Users.belongsTo(User_Roles, { foreignKey: "role"});
+  User_Roles.hasMany(Users, { foreignKey: "role"});
 
   return {
     Document_Classes,
     Documents,
     Projects,
-    User_roles,
+    User_Projects,
+    User_Roles,
     Users,
   };
 }

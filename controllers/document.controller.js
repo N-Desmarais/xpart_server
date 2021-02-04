@@ -100,6 +100,9 @@ exports.findAllDocs = async (req, res) => {
   if(query.checker)
     whereStatement['$Checker.name$'] =
       {[Op.like]: '%' + query.checker + '%'};
+  if(query.checker)
+    whereStatement['checked_date'] =
+      {[Op.like]: '%' + query.checked + '%'};
   if(query.approver)
     whereStatement['$Approver.name$'] =
       {[Op.like]: '%' + query.approver + '%'};

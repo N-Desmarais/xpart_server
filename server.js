@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const sequelize = require("./models/index.js");
+const views = __dirname + '/views/';
 
 const app = express();
 
@@ -10,14 +11,16 @@ var corsOrigin = {
 };
 
 
+
+app.use(express.static(views))
 app.use(bodyParser.json());
 app.use(cors(corsOrigin));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 sequelize.sync();
 
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to xpart server." });
+app.get('/', function (req,res) {
+  res.sendFile(path + "index.html");
 });
 
 require("./routes/document.routes")(app);

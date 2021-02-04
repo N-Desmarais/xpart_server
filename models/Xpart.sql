@@ -37,9 +37,15 @@ CREATE TABLE `Users` (
   `role` int
 );
 
-CREATE TABLE `User_roles` (
+CREATE TABLE `User_Roles` (
   `role_id` int PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255)
+);
+
+CREATE TABLE `User_Projects` (
+  `user` int,
+  `project` int,
+  PRIMARY KEY (`user`, `project`)
 );
 
 ALTER TABLE `Documents` ADD FOREIGN KEY (`project`) REFERENCES `Projects` (`project_id`);
@@ -54,4 +60,8 @@ ALTER TABLE `Documents` ADD FOREIGN KEY (`approver`) REFERENCES `Users` (`user_i
 
 ALTER TABLE `Projects` ADD FOREIGN KEY (`owner`) REFERENCES `Users` (`user_id`);
 
-ALTER TABLE `Users` ADD FOREIGN KEY (`role`) REFERENCES `User_roles` (`role_id`);
+ALTER TABLE `Users` ADD FOREIGN KEY (`role`) REFERENCES `User_Roles` (`role_id`);
+
+ALTER TABLE `User_Projects` ADD FOREIGN KEY (`user`) REFERENCES `Users` (`user_id`);
+
+ALTER TABLE `User_Projects` ADD FOREIGN KEY (`project`) REFERENCES `Projects` (`project_id`);
