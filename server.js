@@ -1,23 +1,19 @@
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const express = require("express");
+const fs = require("fs");
 const http = require("http");
 const https = require("https")
 const sequelize = require("./models/index.js");
 const views = __dirname + '/views/';
 
 const app = express();
-const corsOrigin = { origin: "*" };
 
-app.use(express.static(__dirname, { dotfiles: 'allow' });
+app.use(cors());
+app.use(express.static(__dirname, { dotfiles: 'allow' }));
 app.use(express.static(views));
 app.use(bodyParser.json());
-app.use(cors(corsOrigin));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use (function (req, res, next) { // redirect port 80 to 443
-  if (req.secure) next();
-  else res.redirect('https://' + req.headers.host + req.url);
-});
 
 sequelize.sync();
 
@@ -31,7 +27,7 @@ require("./routes/user.routes")(app);
 
 const chain = "/etc/letsencrypt/live/nostromoxpart.com/chain.pem";
 const cert = "/etc/letsencrypt/live/nostromoxpart.com/cert.pem";
-const privekey = "/etc/letsencrypt/live/nostromoxpart.com/privkey.pem";
+const privkey = "/etc/letsencrypt/live/nostromoxpart.com/privkey.pem";
 
 var options = {
   ca: fs.readFileSync(chain, 'utf8'),
@@ -45,5 +41,8 @@ setTimeout(function () {serverSecure.setSecureContext({
   key: fs.readFileSync(privkey, 'utf8')
 })},86400000)
 
-const server = http.createServer(app).listen(80);
 const serverSecure = https.createServer(options, app).listen(443);
+const server = http.createServer(function (req, res) {
+    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+    res.end();
+}, app).listen(80);
