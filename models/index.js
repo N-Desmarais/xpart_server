@@ -1,4 +1,4 @@
-const dbConfig = require("../config/dbconfig.js");
+const dbConfig = require("/config/dbconfig.js");
 const initModels = require('./init-models.js');
 
 const Sequelize = require("sequelize");
